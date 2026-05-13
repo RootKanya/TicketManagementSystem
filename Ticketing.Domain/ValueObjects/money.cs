@@ -5,14 +5,31 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Ticketing.Domain.ValueObjects;
-public record Money(decimal Amount, string Currency)
+
+public record Money
 {
-    public static Money Zero(string currency = "IDR") => new(0, currency);
-    public static Money Create(decimal amount, string currency = "IDR")
+    public decimal Amount { get; init; }
+    public string Currency { get; init; }
+
+    public Money(decimal amount, string currency = "IDR")
     {
         if (amount < 0)
-            throw new ArgumentException("Price cannot be negative.");
+            throw new ArgumentException("Price or total price cannot be negative.");
 
-        return new Money(amount, currency);
+        Amount = amount;
+        Currency = currency;
+    }
+
+    public static Money operator +(Money a, Money b)
+    {
+        if (a.Currency != b.Currency)
+            throw new InvalidOperationException("Cannot add different currencies.");
+
+        return new Money(a.Amount + b.Amount, a.Currency);
+    }
+
+    public static Money operator *(Money m, int quantity)
+    {
+        return new Money(m.Amount * quantity, m.Currency);
     }
 }
