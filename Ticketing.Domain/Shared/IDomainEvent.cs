@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ticketing.Domain.Events;
-
-public interface IDomainEvent { }
+namespace Ticketing.Domain.Shared
+{
+    public interface IDomainEvent { }
+}

@@ -3,41 +3,55 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ticketing.Domain.ValueObjects;
 
 namespace Ticketing.Domain.Tests;
 
 public class BookingTests
 {
     [Fact]
-    public void CreateBooking_Should_ThrowException_When_QuantityExceedsQuota()
+    public void CreateBooking_Should_ThrowException_When_QuantityIsZero()
     {
-        var categoryId = Guid.NewGuid();
-        var customerId = Guid.NewGuid();
-        var requestedQty = 5;
-        var remainingQuota = 2; 
+        var exception = Assert.Throws<ArgumentException>(() =>
+            Booking.Create(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 0, 100));
 
-        // "IF RequestedQty > RemainingQuota THEN Reject(Fault): 'Requested quantity exceeds remaining ticket quota.'"
-        var exception = Assert.Throws<InvalidOperationException>(() =>
-            Booking.Create(Guid.NewGuid(), customerId, categoryId, requestedQty, remainingQuota));
-
-        Assert.Equal("Requested quantity exceeds remaining ticket quota.", exception.Message);
+        Assert.Equal("Ticket quantity must be greater than zero.", exception.Message);
     }
 
     [Fact]
-    public void CreateBooking_Should_SetStatusToPending_And_RaiseTicketReserved()
+    public void Pay_Should_ThrowException_When_PaymentDeadlineHasPassed()
     {
-        var categoryId = Guid.NewGuid();
-        var customerId = Guid.NewGuid();
-        var requestedQty = 2;
-        var remainingQuota = 100;
+        var booking = Booking.Create(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 1, 100);
+        var paymentAmount = Money.Create(50000);
+        var timeOfPayment = DateTime.UtcNow.AddMinutes(20);
 
-        // "Create Booking AND Set Status = PendingPayment AND Start 15-Min Timer AND Raise TicketReserved."
-        var booking = Booking.Create(Guid.NewGuid(), customerId, categoryId, requestedQty, remainingQuota);
-        Assert.Equal(BookingStatus.PendingPayment, booking.Status);
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            booking.Pay(paymentAmount, timeOfPayment));
 
-        var expectedExpiry = DateTime.UtcNow.AddMinutes(15);
-        Assert.True((expectedExpiry - booking.PaymentDeadline).TotalSeconds < 5); 
+        Assert.Equal("Payment deadline has expired.", exception.Message);
+    }
 
-        Assert.Contains(booking.DomainEvents, e => e is TicketReserved);
+    [Fact]
+    public void Pay_Should_ThrowException_When_AmountIsIncorrect()
+    {
+        var booking = Booking.Create(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 2, 100);
+        var incorrectPayment = Money.Create(80000);
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            booking.Pay(incorrectPayment, DateTime.UtcNow));
+
+        Assert.Equal("Payment amount does not match total price.", exception.Message);
+    }
+
+    [Fact]
+    public void Expire_Should_ThrowException_When_BookingIsAlreadyPaid()
+    {
+        var booking = Booking.Create(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 1, 100);
+        booking.SetStatusForTesting(BookingStatus.Paid);
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            booking.Expire());
+
+        Assert.Equal("Booking is already paid and cannot be expired.", exception.Message);
     }
 }

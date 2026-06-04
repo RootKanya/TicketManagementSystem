@@ -11,12 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="EventManagement\" />
     <Folder Include="CheckinManagement\" />
-    <Folder Include="Shared\" />
     <Folder Include="RefundManagement\" />
     <Folder Include="PaymentManagement\" />
-    <Folder Include="TicketBookingManagement\" />
     <Folder Include="TicketCategoryManagement\" />
   </ItemGroup>
 
