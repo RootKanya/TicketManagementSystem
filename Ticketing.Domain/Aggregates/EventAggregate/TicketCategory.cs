@@ -12,11 +12,11 @@ public class TicketCategory
     public Guid Id { get; private set; }
     public string Name { get; private set; }
     public Money Price { get; private set; }
-    public Quota Quota { get; private set; }
-    public DateRange SalesPeriod { get; private set; }
+    public EventCapacity Quota { get; private set; }
+    public EventSchedule SalesPeriod { get; private set; }
     public bool IsActive { get; private set; }
 
-    public TicketCategory(string name, Money price, Quota quota, DateRange salesPeriod)
+    public TicketCategory(string name, Money price, EventCapacity quota, EventSchedule salesPeriod)
     {
         Id = Guid.NewGuid();
         Name = name;

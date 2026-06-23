@@ -14,10 +14,10 @@ public class Ticket
     public Guid BookingId { get; private set; }
     public Guid EventId { get; private set; }
     public Guid TicketCategoryId { get; private set; }
-    public TicketCode Code { get; private set; } 
+    public SalesPeriod Code { get; private set; } 
     public string Status { get; private set; } 
 
-    public Ticket(Guid bookingId, Guid eventId, Guid categoryId, TicketCode code)
+    public Ticket(Guid bookingId, Guid eventId, Guid categoryId, SalesPeriod code)
     {
         Id = Guid.NewGuid();
         BookingId = bookingId;

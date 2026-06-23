@@ -11,10 +11,17 @@ public record Money
     public decimal Amount { get; init; }
     public string Currency { get; init; }
 
-    public Money(decimal amount, string currency = "IDR")
+    public Money(decimal amount, string currency)
     {
         if (amount < 0)
-            throw new ArgumentException("Price or total price cannot be negative.");
+        {
+            throw new ArgumentException("Total price cannot be negative.");
+        }
+
+        if (string.IsNullOrWhiteSpace(currency))
+        {
+            throw new ArgumentException("Currency cannot be empty.");
+        }
 
         Amount = amount;
         Currency = currency;

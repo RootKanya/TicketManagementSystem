@@ -12,14 +12,14 @@ public class Event
     public Guid Id { get; private set; }
     public string Name { get; private set; }
     public string Description { get; private set; }
-    public DateRange Schedule { get; private set; }
-    public Quota MaxCapacity { get; private set; } 
+    public EventSchedule Schedule { get; private set; }
+    public EventCapacity MaxCapacity { get; private set; } 
     public string Status { get; private set; }
 
     private readonly List<TicketCategory> _categories = new();
     public IReadOnlyCollection<TicketCategory> Categories => _categories.AsReadOnly();
 
-    public Event(string name, string description, DateRange schedule, Quota maxCapacity)
+    public Event(string name, string description, EventSchedule schedule, EventCapacity maxCapacity)
     {
         Id = Guid.NewGuid();
         Name = name;
@@ -29,7 +29,7 @@ public class Event
         Status = "Draft"; 
     }
 
-    public void AddTicketCategory(string name, Money price, Quota quota, DateRange salesPeriod)
+    public void AddTicketCategory(string name, Money price, EventCapacity quota, EventSchedule salesPeriod)
     {
         if (_categories.Sum(c => c.Quota.Value) + quota.Value > MaxCapacity.Value)
             throw new InvalidOperationException("Total quota exceeds maximum event capacity.");
