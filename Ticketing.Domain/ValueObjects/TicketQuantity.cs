@@ -20,8 +20,7 @@ public record TicketQuantity
         Value = quantity;
     }
 
-    // Operator overloading opsional namun sangat direkomendasikan di DDD 
-    // agar Anda bisa melakukan operasi matematika dengan mudah.
+    // Operator overloads
     public static TicketQuantity operator +(TicketQuantity a, TicketQuantity b) => new TicketQuantity(a.Value + b.Value);
     public static TicketQuantity operator -(TicketQuantity a, TicketQuantity b) => new TicketQuantity(a.Value - b.Value);
     public static bool operator >(TicketQuantity a, TicketQuantity b) => a.Value > b.Value;
