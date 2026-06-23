@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Ticketing.Domain.Aggregates.EventAggregate;
+using Ticketing.Domain.Aggregates;
 
 namespace Ticketing.Domain.Repositories;
 
-public interface IEventRepository
+public interface IBookingRepository
 {
-    Task<Event?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task AddAsync(Event @event, CancellationToken cancellationToken = default);
-    Task UpdateAsync(Event @event, CancellationToken cancellationToken = default);
+    Task<Booking?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task AddAsync(Booking booking, CancellationToken cancellationToken = default);
+    Task UpdateAsync(Booking booking, CancellationToken cancellationToken = default);
+
+    // Metode ini khusus dibutuhkan oleh Domain Service untuk memvalidasi aturan bisnis US 8
+    Task<bool> HasActiveBookingForEventAsync(Guid customerId, Guid eventId, CancellationToken cancellationToken = default);
 }

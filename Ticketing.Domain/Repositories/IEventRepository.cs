@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Ticketing.Domain.Aggregates.EventAggregate;
-
+using Ticketing.Domain.Aggregates;
 namespace Ticketing.Domain.Repositories;
 
 public interface IEventRepository
