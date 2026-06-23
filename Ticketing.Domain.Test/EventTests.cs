@@ -7,53 +7,75 @@ using Ticketing.Domain.ValueObjects;
 
 namespace Ticketing.Domain.Tests;
 
+using Ticketing.Domain.Aggregates;
+using Ticketing.Domain.ValueObjects;
+using Ticketing.Domain.Enums;
+
 public class EventTests
 {
-    [Fact]
-    public void Event_Should_ThrowException_When_EndDateIsBeforeStartDate()
+    private Event CreateValidDraftEvent(int capacity = 100)
     {
-        var startDate = DateTime.UtcNow.AddDays(2);
-        var endDate = DateTime.UtcNow.AddDays(1);
-
-        var exception = Assert.Throws<ArgumentException>(() =>
-            new Event(Guid.NewGuid(), "ITS Music Fest", 100, startDate, endDate));
-
-        Assert.Equal("End date cannot be earlier than start date.", exception.Message);
+        return new Event(
+            Guid.NewGuid(),
+            "Tech Conference 2026",
+            "Annual tech conf",
+            new EventSchedule(DateTime.UtcNow.AddDays(10), DateTime.UtcNow.AddDays(12)),
+            "Surabaya",
+            new EventCapacity(capacity)
+        );
     }
 
     [Fact]
-    public void Event_Should_ThrowException_When_CapacityIsZeroOrNegative()
+    public void PublishEvent_WithoutActiveTicketCategory_ThrowsInvalidOperationException()
     {
-        var validStart = DateTime.UtcNow.AddDays(1);
-        var validEnd = DateTime.UtcNow.AddDays(2);
+        // Arrange
+        var @event = CreateValidDraftEvent();
 
-        var exception = Assert.Throws<ArgumentException>(() =>
-            new Event(Guid.NewGuid(), "Tech Seminar", 0, validStart, validEnd));
-
-        Assert.Equal("Maximum capacity must be greater than zero.", exception.Message);
-    }
-
-    [Fact]
-    public void Publish_Should_ThrowException_When_NoActiveTicketCategories()
-    {
-        var @event = new Event(Guid.NewGuid(), "Tech Talk", 50, DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(2));
-
+        // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => @event.Publish());
-
-        Assert.Equal("Cannot publish an event without active ticket categories.", exception.Message);
+        Assert.Equal("An event can only be published if it has at least one active ticket category.", exception.Message);
     }
 
     [Fact]
-    public void AddTicketCategory_Should_ThrowException_When_QuotaExceedsCapacity()
+    public void AddTicketCategory_QuotaExceedsEventCapacity_ThrowsArgumentException()
     {
-        var @event = new Event(Guid.NewGuid(), "Workshop", 100, DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(2));
-        var price = Money.Create(50000);
+        // Arrange
+        var @event = CreateValidDraftEvent(capacity: 100);
 
-        @event.AddTicketCategory("Regular", price, 80);
+        var price = new Money(50000, "IDR");
+        var salesPeriod = new SalesPeriod(DateTime.UtcNow, DateTime.UtcNow.AddDays(5));
 
-        var exception = Assert.Throws<InvalidOperationException>(() =>
-            @event.AddTicketCategory("VIP", price, 30));
+        @event.AddTicketCategory("Regular", price, new TicketQuantity(60), salesPeriod);
 
-        Assert.Equal("Total ticket quota exceeds event maximum capacity.", exception.Message);
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() =>
+            @event.AddTicketCategory("VIP", price, new TicketQuantity(50), salesPeriod));
+
+        Assert.Equal("The total quota of all ticket categories must not exceed the maximum event capacity.", exception.Message);
+    }
+
+    [Fact]
+    public void PublishEvent_WithValidData_ChangesStatusAndRaisesEvent()
+    {
+        // Arrange
+        var @event = CreateValidDraftEvent(capacity: 100);
+        @event.AddTicketCategory(
+            "Regular",
+            new Money(50000, "IDR"),
+            new TicketQuantity(50),
+            new SalesPeriod(DateTime.UtcNow, DateTime.UtcNow.AddDays(5))
+        );
+
+        @event.ClearEvents();
+
+        // Act
+        @event.Publish();
+
+        // Assert
+        Assert.Equal(EventStatus.Published, @event.Status);
+
+        var domainEvent = @event.DomainEvents.FirstOrDefault();
+        Assert.NotNull(domainEvent);
+        Assert.Contains("EventPublished", domainEvent.GetType().Name);
     }
 }

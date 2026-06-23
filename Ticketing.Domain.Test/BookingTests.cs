@@ -7,51 +7,28 @@ using Ticketing.Domain.ValueObjects;
 
 namespace Ticketing.Domain.Tests;
 
+using Ticketing.Domain.Aggregates;
+using Ticketing.Domain.ValueObjects;
+using Ticketing.Domain.Enums;
+
 public class BookingTests
 {
     [Fact]
-    public void CreateBooking_Should_ThrowException_When_QuantityIsZero()
+    public void CreateBooking_ForUnpublishedEvent_ThrowsInvalidOperationException()
     {
-        var exception = Assert.Throws<ArgumentException>(() =>
-            Booking.Create(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 0, 100));
+        // Arrange
+        var draftEvent = new Event(
+            Guid.NewGuid(), "Draft Event", "Desc",
+            new EventSchedule(DateTime.UtcNow.AddDays(10), DateTime.UtcNow.AddDays(11)),
+            "Loc", new EventCapacity(100));
 
-        Assert.Equal("Ticket quantity must be greater than zero.", exception.Message);
-    }
+        var categoryId = Guid.NewGuid();
 
-    [Fact]
-    public void Pay_Should_ThrowException_When_PaymentDeadlineHasPassed()
-    {
-        var booking = Booking.Create(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 1, 100);
-        var paymentAmount = Money.Create(50000);
-        var timeOfPayment = DateTime.UtcNow.AddMinutes(20);
-
+        // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() =>
-            booking.Pay(paymentAmount, timeOfPayment));
+            new Booking(Guid.NewGuid(), Guid.NewGuid(), draftEvent, categoryId, new TicketQuantity(2), 5000m)
+        );
 
-        Assert.Equal("Payment deadline has expired.", exception.Message);
-    }
-
-    [Fact]
-    public void Pay_Should_ThrowException_When_AmountIsIncorrect()
-    {
-        var booking = Booking.Create(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 2, 100);
-        var incorrectPayment = Money.Create(80000);
-
-        var exception = Assert.Throws<InvalidOperationException>(() =>
-            booking.Pay(incorrectPayment, DateTime.UtcNow));
-
-        Assert.Equal("Payment amount does not match total price.", exception.Message);
-    }
-
-    [Fact]
-    public void Expire_Should_ThrowException_When_BookingIsAlreadyPaid()
-    {
-        var booking = Booking.Create(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 1, 100);
-        booking.SetStatusForTesting(BookingStatus.Paid);
-
-        var exception = Assert.Throws<InvalidOperationException>(() =>
-            booking.Expire());
-
-        Assert.Equal("Booking is already paid and cannot be expired.", exception.Message);
+        Assert.Equal("A booking can only be created for an event with the status Published.", exception.Message);
     }
 }
