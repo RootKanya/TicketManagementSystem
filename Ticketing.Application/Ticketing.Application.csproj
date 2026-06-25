@@ -18,8 +18,6 @@
 
   <ItemGroup>
     <Folder Include="CheckinManagement\" />
-    <Folder Include="DTOs\" />
-    <Folder Include="Queries\" />
     <Folder Include="RefundManagement\" />
     <Folder Include="PaymentManagement\" />
   </ItemGroup>
