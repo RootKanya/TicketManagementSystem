@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Ticketing.Domain.Entities;
 using Ticketing.Domain.Repositories;
-using Ticketing.Infrastructure.Data; 
 
 namespace Ticketing.Infrastructure.Persistence
 {
@@ -18,37 +18,37 @@ namespace Ticketing.Infrastructure.Persistence
             _context = context;
         }
 
-        public async Task<Ticket?> GetByIdAsync(Guid id) =>
-            await _context.Tickets.FindAsync(id);
+        public async Task<Ticket?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
+            await _context.Tickets.FindAsync(new object[] { id }, cancellationToken);
 
-        public async Task<Ticket?> GetByCodeAsync(string ticketCode) =>
-            await _context.Tickets.FirstOrDefaultAsync(t => t.TicketCode == ticketCode);
+        public async Task<Ticket?> GetByCodeAsync(string ticketCode, CancellationToken cancellationToken = default) =>
+            await _context.Tickets.FirstOrDefaultAsync(t => t.TicketCode == ticketCode, cancellationToken);
 
-        public async Task<IEnumerable<Ticket>> GetByBookingIdAsync(Guid bookingId) =>
-            await _context.Tickets.Where(t => t.BookingId == bookingId).ToListAsync();
+        public async Task<IEnumerable<Ticket>> GetByBookingIdAsync(Guid bookingId, CancellationToken cancellationToken = default) =>
+            await _context.Tickets.Where(t => t.BookingId == bookingId).ToListAsync(cancellationToken);
 
-        public async Task AddAsync(Ticket ticket)
+        public async Task AddAsync(Ticket ticket, CancellationToken cancellationToken = default)
         {
-            await _context.Tickets.AddAsync(ticket);
-            await _context.SaveChangesAsync();
+            await _context.Tickets.AddAsync(ticket, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task AddRangeAsync(IEnumerable<Ticket> tickets)
+        public async Task AddRangeAsync(IEnumerable<Ticket> tickets, CancellationToken cancellationToken = default)
         {
-            await _context.Tickets.AddRangeAsync(tickets);
-            await _context.SaveChangesAsync();
+            await _context.Tickets.AddRangeAsync(tickets, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public Task UpdateAsync(Ticket ticket)
+        public async Task UpdateAsync(Ticket ticket, CancellationToken cancellationToken = default)
         {
             _context.Tickets.Update(ticket);
-            return _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public Task UpdateRangeAsync(IEnumerable<Ticket> tickets)
+        public async Task UpdateRangeAsync(IEnumerable<Ticket> tickets, CancellationToken cancellationToken = default)
         {
             _context.Tickets.UpdateRange(tickets);
-            return _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }
