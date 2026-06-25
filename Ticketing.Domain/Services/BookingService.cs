@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Ticketing.Domain.Aggregates;
 using Ticketing.Domain.Repositories;
 using Ticketing.Domain.ValueObjects;
+using Ticketing.Domain.Aggregates;
+using Ticketing.Domain.Entities;
 
 namespace Ticketing.Domain.Services;
 

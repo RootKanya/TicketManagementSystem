@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 using Ticketing.Domain.Aggregates;
 using Ticketing.Domain.Repositories;
-using Ticketing.Infrastructure.Data;
 
-namespace Ticketing.Infrastructure.Persistence 
+namespace Ticketing.Infrastructure.Persistence
 {
     public class RefundRepository : IRefundRepository
     {

@@ -73,5 +73,13 @@ namespace Ticketing.Domain.Aggregates
 
             Status = BookingStatus.Expired;
         }
+
+        public void MarkAsRefunded()
+        {
+            if (Status != BookingStatus.Paid)
+                throw new InvalidOperationException("Only paid bookings can be refunded.");
+
+            Status = BookingStatus.Refunded;
+        }
     }
 }
