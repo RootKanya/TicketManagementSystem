@@ -27,6 +27,10 @@ JSON
   "DefaultConnection": "Host=localhost;Database=EventTicketingDb;Username=postgres;Password=YourSecurePassword"
 }
 
+Clean Architecture Diagram
+
+![Clean Architecture Diagram](./diagram.jpeg)
+
 2.2. Executing Database Migrations
 
 To instantiate the database schema using EF Core Code-First migrations, execute the following command from the root solution directory:
@@ -132,3 +136,7 @@ External integrations are abstracted in the Application layer and implemented in
     [x] Unit test results (Execute via dotnet test)
 
     [x] Explanation of implemented aggregates and business rules (Section 4)
+
+6. API Documentation
+
+https://documenter.getpostman.com/view/53953592/2sBXwyF6M5
