@@ -12,7 +12,5 @@ public interface IBookingRepository
     Task<Booking?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task AddAsync(Booking booking, CancellationToken cancellationToken = default);
     Task UpdateAsync(Booking booking, CancellationToken cancellationToken = default);
-
-    // Metode ini khusus dibutuhkan oleh Domain Service untuk memvalidasi aturan bisnis US 8
     Task<bool> HasActiveBookingForEventAsync(Guid customerId, Guid eventId, CancellationToken cancellationToken = default);
 }

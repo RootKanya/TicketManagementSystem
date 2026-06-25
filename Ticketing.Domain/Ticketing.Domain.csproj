@@ -7,10 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Aggregates\EventAggregate\" />
-    <Folder Include="Aggregates\BookingAggregate\" />
-    <Folder Include="Aggregates\RefundAggregate\" />
-    <Folder Include="Exceptions\" />
+    <Compile Remove="Exceptions\**" />
+    <EmbeddedResource Remove="Exceptions\**" />
+    <None Remove="Exceptions\**" />
   </ItemGroup>
 
 </Project>

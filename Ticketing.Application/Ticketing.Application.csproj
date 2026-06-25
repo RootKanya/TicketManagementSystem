@@ -7,14 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TicketCategoryManagement\**" />
+    <EmbeddedResource Remove="TicketCategoryManagement\**" />
+    <None Remove="TicketCategoryManagement\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Ticketing.Domain\Ticketing.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="CheckinManagement\" />
+    <Folder Include="DTOs\" />
+    <Folder Include="Queries\" />
     <Folder Include="RefundManagement\" />
     <Folder Include="PaymentManagement\" />
-    <Folder Include="TicketCategoryManagement\" />
   </ItemGroup>
 
 </Project>
