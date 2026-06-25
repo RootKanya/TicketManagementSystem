@@ -24,4 +24,8 @@
     <Folder Include="PaymentManagement\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.79" />
+  </ItemGroup>
+
 </Project>
