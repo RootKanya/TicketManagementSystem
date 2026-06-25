@@ -24,7 +24,8 @@ namespace Ticketing.Infrastructure.Persistence
         public async Task<Ticket?> GetByCodeAsync(string ticketCode, CancellationToken cancellationToken = default) =>
             await _context.Tickets.FirstOrDefaultAsync(t => t.TicketCode == ticketCode, cancellationToken);
 
-        public async Task<IEnumerable<Ticket>> GetByBookingIdAsync(Guid bookingId, CancellationToken cancellationToken = default) =>
+        // FIX: Changed IEnumerable to List to match Person A's interface exactly
+        public async Task<List<Ticket>> GetByBookingIdAsync(Guid bookingId, CancellationToken cancellationToken = default) =>
             await _context.Tickets.Where(t => t.BookingId == bookingId).ToListAsync(cancellationToken);
 
         public async Task AddAsync(Ticket ticket, CancellationToken cancellationToken = default)
