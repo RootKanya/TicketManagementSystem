@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Ticketing.Domain.Aggregates.RefundAggregate;
+using Ticketing.Domain.Aggregates;
 
-namespace Ticketing.Domain.Repositories;
-
-public interface IRefundRepository
+namespace Ticketing.Domain.Repositories
 {
-    Task<Refund?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task AddAsync(Refund refund, CancellationToken cancellationToken = default);
-    Task UpdateAsync(Refund refund, CancellationToken cancellationToken = default);
+    public interface IRefundRepository
+    {
+        Task<Refund?> GetByIdAsync(Guid id);
+        Task<Refund?> GetByBookingIdAsync(Guid bookingId);
+        Task AddAsync(Refund refund);
+        Task UpdateAsync(Refund refund);
+    }
 }
