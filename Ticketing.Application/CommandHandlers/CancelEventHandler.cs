@@ -8,8 +8,9 @@ namespace Ticketing.Application.CommandHandlers;
 
 using global::Ticketing.Application.Commands;
 using global::Ticketing.Domain.Repositories;
+using MediatR;
 
-public class CancelEventCommandHandler
+public class CancelEventCommandHandler : IRequestHandler<CancelEventCommand>
 {
     private readonly IEventRepository _eventRepository;
 

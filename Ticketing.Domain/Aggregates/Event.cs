@@ -37,7 +37,7 @@ public class Event
         _domainEvents.Add(new { EventId = Id, OccurredOn = DateTime.UtcNow });
     }
 
-    public void AddTicketCategory(string name, Money price, TicketQuantity quota, SalesPeriod salesPeriod)
+    public Guid AddTicketCategory(string name, Money price, TicketQuantity quota, SalesPeriod salesPeriod)
     {
         if (!salesPeriod.IsValidAgainstEventStartDate(Schedule.StartDate))
         {
@@ -54,6 +54,8 @@ public class Event
         _ticketCategories.Add(category);
 
         _domainEvents.Add(new { EventId = Id, CategoryId = category.Id });
+        
+        return category.Id;
     }
 
     public void Publish()

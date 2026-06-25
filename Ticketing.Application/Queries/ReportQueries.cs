@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MediatR;
+using Ticketing.Application.DTOs;
 
 namespace Ticketing.Application.Queries;
 
-public record GetEventSalesReportQuery(Guid EventId);
+public record GetEventSalesReportQuery(Guid EventId) : IRequest<SalesReportDto>;
 
-public record GetEventParticipantsQuery(Guid EventId);
+public record GetEventParticipantsQuery(Guid EventId) : IRequest<IEnumerable<ParticipantDto>>;

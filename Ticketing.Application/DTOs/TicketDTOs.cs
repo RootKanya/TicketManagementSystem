@@ -10,7 +10,7 @@ namespace Ticketing.Application.DTOs
     {
         public Guid TicketId { get; set; }
         public Guid EventId { get; set; }
-        public string EventName { get; set; } // Kita join ke tabel Event nanti
+        public string EventName { get; set; }
         public string TicketCode { get; set; }
         public string Status { get; set; }
     }

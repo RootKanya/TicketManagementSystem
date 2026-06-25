@@ -8,8 +8,9 @@ namespace Ticketing.Application.CommandHandlers;
 
 using global::Ticketing.Application.Commands;
 using global::Ticketing.Domain.Repositories;
+using MediatR;
 
-public class PublishEventHandler
+public class PublishEventHandler : IRequestHandler<PublishEventCommand>
 {
     private readonly IEventRepository _eventRepository;
 
@@ -21,6 +22,7 @@ public class PublishEventHandler
             ?? throw new KeyNotFoundException("Event not found.");
 
         @event.Publish();
+
         await _eventRepository.UpdateAsync(@event, cancellationToken);
     }
 }

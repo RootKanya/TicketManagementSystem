@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-
 using Dapper;
+using MediatR;
+using Ticketing.Application.DTOs;
+using Ticketing.Application.ExternalInterfaces;
+using Ticketing.Application.Queries;
 
 namespace Ticketing.Application.QueryHandlers;
 
-using global::Ticketing.Application.DTOs;
-using global::Ticketing.Application.ExternalInterfaces;
-using global::Ticketing.Application.Queries;
-
-public class GetAvailableEventsHandler
+public class GetAvailableEventsHandler : IRequestHandler<GetAvailableEventsQuery, IEnumerable<EventListItemDto>>
 {
     private readonly IQueryConnectionFactory _connectionFactory;
 

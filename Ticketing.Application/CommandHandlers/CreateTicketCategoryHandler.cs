@@ -1,25 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using MediatR; 
+using Ticketing.Application.Commands;
+using Ticketing.Domain.Repositories;
+using Ticketing.Domain.ValueObjects;
 
 namespace Ticketing.Application.CommandHandlers;
 
-using global::Ticketing.Application.Commands;
-using global::Ticketing.Domain.Repositories;
-using global::Ticketing.Domain.ValueObjects;
-
-public class CreateTicketCategoryCommandHandler
+public class CreateTicketCategoryHandler : IRequestHandler<CreateTicketCategoryCommand, Guid>
 {
     private readonly IEventRepository _eventRepository;
 
-    public CreateTicketCategoryCommandHandler(IEventRepository eventRepository)
+    public CreateTicketCategoryHandler(IEventRepository eventRepository)
     {
         _eventRepository = eventRepository;
     }
 
-    public async Task Handle(CreateTicketCategoryCommand command, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateTicketCategoryCommand command, CancellationToken cancellationToken)
     {
         var @event = await _eventRepository.GetByIdAsync(command.EventId, cancellationToken)
             ?? throw new KeyNotFoundException($"Event with ID {command.EventId} was not found.");
@@ -28,8 +26,10 @@ public class CreateTicketCategoryCommandHandler
         var quota = new TicketQuantity(command.Quota);
         var salesPeriod = new SalesPeriod(command.SalesStartDate, command.SalesEndDate);
 
-        @event.AddTicketCategory(command.Name, price, quota, salesPeriod);
+        var newCategoryId = @event.AddTicketCategory(command.Name, price, quota, salesPeriod);
 
         await _eventRepository.UpdateAsync(@event, cancellationToken);
+
+        return newCategoryId;
     }
 }

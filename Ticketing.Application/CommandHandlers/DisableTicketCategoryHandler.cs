@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Ticketing.Application.Commands;
+using Ticketing.Domain.Repositories;
 
 namespace Ticketing.Application.CommandHandlers;
 
-using global::Ticketing.Application.Commands;
-using global::Ticketing.Domain.Repositories;
-
-public class DisableTicketCategoryCommandHandler
+public class DisableTicketCategoryCommandHandler : IRequestHandler<DisableTicketCategoryCommand>
 {
     private readonly IEventRepository _eventRepository;
 

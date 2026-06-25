@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-
 using Dapper;
+using MediatR;
+using Ticketing.Application.DTOs;
+using Ticketing.Application.ExternalInterfaces;
+using Ticketing.Application.Queries;
 
 namespace Ticketing.Application.QueryHandlers;
 
-using global::Ticketing.Application.DTOs;
-using global::Ticketing.Application.ExternalInterfaces;
-using global::Ticketing.Application.Queries;
-
-public class GetEventParticipantsHandler
+public class GetEventParticipantsHandler : IRequestHandler<GetEventParticipantsQuery, IEnumerable<ParticipantDto>>
 {
     private readonly IQueryConnectionFactory _connectionFactory;
 
@@ -37,6 +34,6 @@ public class GetEventParticipantsHandler
             JOIN TicketCategories tc ON b.TicketCategoryId = tc.Id
             WHERE b.EventId = @EventId AND b.Status = 'Paid'";
 
-        return new List<ParticipantDto>();
+        return await connection.QueryAsync<ParticipantDto>(sql, new { query.EventId });
     }
 }

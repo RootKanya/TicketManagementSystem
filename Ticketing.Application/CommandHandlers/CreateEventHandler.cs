@@ -10,8 +10,9 @@ using global::Ticketing.Application.Commands;
 using global::Ticketing.Domain.Aggregates;
 using global::Ticketing.Domain.Repositories;
 using global::Ticketing.Domain.ValueObjects;
+using MediatR;
 
-public class CreateEventHandler
+public class CreateEventHandler : IRequestHandler<CreateEventCommand, Guid>
 {
     private readonly IEventRepository _eventRepository;
 
@@ -26,6 +27,7 @@ public class CreateEventHandler
         );
 
         await _eventRepository.AddAsync(@event, cancellationToken);
+
         return @event.Id;
     }
 }
